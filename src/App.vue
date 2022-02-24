@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <button v-if="!login.isLoggedIn" @click="loginMutation()">login</button>
-    <p v-else>Hello {{login.user}}</p>
+    <p v-else>Hello {{ login.user }}</p>
     <h3>Todo</h3>
     <ul>
       <li v-for="todo in todos" :key="todo.text">{{ todo.text }}</li>
@@ -20,19 +20,25 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { State, Action, Getter, Mutation } from "vuex-class";
+import { State, Action, Getter, Mutation, namespace } from "vuex-class";
 import { LoginState, Todo } from "./store/types";
+
+const TodoGetter = namespace("todos", Getter);
+const TodoMutation = namespace("todos", Mutation);
+const TodoAction = namespace("todos", Action);
+
+const LoginMutation = namespace("login", Mutation);
 
 @Component
 export default class App extends Vue {
   @State login!: LoginState;
-  @Getter todos!: Todo[];
-  @Getter dones!: Todo[];
+  @TodoGetter todos!: Todo[];
+  @TodoGetter dones!: Todo[];
 
-  @Mutation('login') loginMutation!: () => void;
-  @Mutation addTodo!: (todo: Todo) => void;
+  @LoginMutation("login") loginMutation!: () => void;
+  @TodoMutation addTodo!: (todo: Todo) => void;
 
-  @Action addTodoAsync!: (id: string) => void;
+  @TodoAction addTodoAsync!: (id: string) => void;
 
   newTodo: Todo = {
     text: "New Todo",
